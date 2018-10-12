@@ -1,0 +1,170 @@
+<div class="col-md-12 col-sm-12 col-xs-12">
+    <h1 style="text-align: center">{{title}}</h1>
+
+      <!--KPI DE PRODUCTS SELLERS E SALES-->
+    <div class="card col-md-12 col-sm-12 col-xs-12">
+        <div class="card-body" >
+            <div class="container bootstrap snippet">
+                <div class="row d-flex justify-content-center">
+                  <div class="col-lg-2 col-sm-6">
+                    <div class="circle-tile ">
+                      <a href="#"><div class="circle-tile-heading dark-blue"><i class="fas fa-archive fa-fw fa-3x" style="padding-top:10px"></i></div></a>
+                      <div class="circle-tile-content dark-blue">
+                        <div class="circle-tile-description text-faded"> Products</div>
+                        <div class="circle-tile-number text-faded ">{{products.length}}</div>
+                      </div>
+                    </div>
+                  </div>
+                   
+                  <div class="col-lg-2 col-sm-6">
+                    <div class="circle-tile ">
+                      <a href="#"><div class="circle-tile-heading red"><i class="fa fa-users fa-fw fa-3x"></i></div></a>
+                      <div class="circle-tile-content red">
+                        <div class="circle-tile-description text-faded"> Sellers </div>
+                        <div class="circle-tile-number text-faded ">{{sellers.length}}</div>
+                      </div>
+                    </div>
+                  </div> 
+
+                  <div class="col-lg-2 col-sm-6">
+                    <div class="circle-tile ">
+                      <a href="#"><div class="circle-tile-heading green"><i class="fas fa-clipboard-check fa-fw fa-3x"  style="padding-top:10px"></i></div></a>
+                      <div class="circle-tile-content green">
+                        <div class="circle-tile-description text-faded"> Sales </div>
+                        <div class="circle-tile-number text-faded ">{{sales.length}}</div>
+                      </div>
+                    </div>
+                  </div> 
+                </div> 
+              </div> 
+        </div>
+      </div>
+
+      <!-- HISTÓRICO DE PRODUTOS VENDIDOS-->
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">#ID</th>
+              <th scope="col">Seller</th>
+              <th scope="col">Product</th>
+              <th scope="col">Data</th> 
+              <th scope="col">Comission</th> 
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let sal of sales; let i = index; trackBy: trackByFn">
+              <th scope="row">{{sal.id}}</th>
+              <td>{{sal.cdVendedor === null ? 'Not exists' : sal.cdVendedor  }}</td>
+              <td>{{sal.cdProduto === null ? 'Not exists' : sal.cdProduto  }}</td>
+              <td>{{sal.dataCriacao === null ? 'Not exists' : sal.dataCriacao  }}</td>
+              <td>R$ {{sal.vlrComissao === null ? 'Not exists' : sal.vlrComissao  }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <button id="btnExport" class="btn btn-secondary" (click)="ExcelReport()"> EXPORT </button>
+      </div>
+      <!--SEÇÃO DE PRODUTOS-->
+      <hr>
+      <h3 class="text-center" style="margin-bottom: 20px">Products List</h3>
+      <div class="col-md-6 col-sm-6 col-xs-6" style="margin-bottom: 20px">
+          <div class="dropdown">
+            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Order By
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" (click)="orderByPrice()">Price</a>
+              <a class="dropdown-item" (click)="orderByAmount()">Amount</a>
+            </div>
+          </div>
+        </div>
+      <div class="col-md-12 col-sm-12 col-xs-12" style="margin-bottom: 20px">
+        <input class="form-control" id="myInput" type="text" placeholder="Search..">
+      </div>
+
+      <!--ACCORDION DE PRODUTOS-->
+      <div class="col-md-12 col-sm-12 col-xs-12" id="productList">
+        <ngb-accordion [closeOthers]="true" activeIds="">
+          <ngb-panel *ngFor="let pr of products; let i = index; trackBy: trackByFn" id="static-{{pr.cdProduto}}">
+            <ng-template ngbPanelTitle>
+              <span> {{pr.dsProduto === null || pr.dsProduto === '' ? 'Undefined' : pr.dsProduto  }} </span>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <div class="col-md-12 col-sm-12 col-xs-12" *ngIf="!editMode">
+                <form>
+                    
+                  <div class="form-group">
+                    <label for="sale">Product Name:</label>
+                    <input class="form-control" type="text" [value]="pr.dsProduto" name="dsProduto" required disabled>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="sale">Price per Unit:</label>
+                    <input class="form-control money" type="number" [value]="pr.vlrUnitario" name="vlrUnitario" required disabled>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="sale">Physical Product: </label>
+                    <select class="form-control"  name="flFisico" required disabled>
+                      <option  [value]="1" >Yes</option>
+                      <option  [value]="0" >No</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="sale">Amount:</label>
+                    <input class="form-control" type="number" [value]="pr.qtdEstoque" name="qtdEstoque" required disabled>
+                  </div>
+
+                </form>
+                <button (click)="editModeChange(pr)" class="btn btn-primary">Edit</button>
+
+              </div>
+
+              <!--editMode Ativo-->
+              <div class="col-md-12 col-sm-12 col-xs-12" *ngIf="editMode">
+                  <form (ngSubmit)="onSubmitProd(pr.cdProduto, productFormU.value)" #productFormU="ngForm" style="margin-bottom: 20px">
+                      
+                    <div class="form-group">
+                      <label for="sale">Product Name:</label>
+                      <input class="form-control" type="text" [value]="pr.dsProduto" name="dsProduto" required ngModel>
+                    </div>
+  
+                    <div class="form-group">
+                      <label for="sale">Price per Unit:</label>
+                      <input class="form-control money" type="number" [value]="pr.vlrUnitario" name="vlrUnitario" required ngModel> 
+                    </div>
+  
+                    <div class="form-group">
+                      <label for="sale">Physical Product: </label>
+                      <select class="form-control"  name="flFisico" required ngModel>
+                        <option  [value]="1" >Yes</option>
+                        <option  [value]="0" >No</option>
+                      </select>
+                    </div>
+  
+                    <div class="form-group">
+                      <label for="sale">Amount:</label>
+                      <input class="form-control" type="number" [value]="pr.qtdEstoque" name="qtdEstoque" required ngModel>
+                    </div>
+  
+                    <button type="submit"  class="btn btn-success">Save</button>
+
+                    <button type="reset" (click)="editModeChange(pr)" class="btn btn-danger">Cancel</button>
+  
+                  </form>
+                </div>
+            </ng-template>
+          </ngb-panel>
+        </ngb-accordion>
+      </div>
+
+      <div class="col-md-12 col-sm-12 col-xs-12" style="margin-top: 30px">
+        <app-form-product></app-form-product>
+      </div>
+     
+</div>
+
+
+
+

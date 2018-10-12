@@ -1,0 +1,71 @@
+  <div class="col-md-12 col-sm-12 col-xs-12">
+
+        <p>
+          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapse1 multiCollapse2">Register</button>
+        </p>
+        <div class="row">
+          <div class="col">
+            <div class="collapse multi-collapse" id="multiCollapse1">
+              <div class="card card-body">
+                  <h5>Sales Sign Up</h5>
+                  <form (ngSubmit)="onSubmitSales(salesForm.value)" #salesForm="ngForm">
+            
+                    <div class="form-group">
+                      <label for="sale">Seller:</label>
+                      <select class="form-control"  name="cdVendedor" required ngModel>
+                        <option *ngFor="let sel of sellers"  [value]="sel.cdVendedor">{{sel.dsVendedor}}</option>
+                      </select>
+                    </div>
+            
+                    <div class="form-group">
+                      <label for="sale">Product:</label>
+                      <select class="form-control"  name="cdProduto" required ngModel>
+                        <option *ngFor="let prod of products"  [value]="prod.cdProduto">{{prod.dsProduto}}</option>
+                      </select>
+                    </div>
+            
+                    <button type="submit" class="btn btn-success">Submit</button>
+            
+                  </form>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="collapse multi-collapse" id="multiCollapse2">
+              <div class="card card-body">
+                  <h5>Products Sign Up</h5>
+                  <form (ngSubmit)="onSubmitProduct(productForm.value)" #productForm="ngForm">
+                  
+                    <div class="form-group">
+                      <label for="sale">Product Name:</label>
+                      <input class="form-control" type="text" name="dsProduto" required ngModel>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="sale">Price per Unit:</label>
+                      <input class="form-control" type="number" name="vlrUnitario" required ngModel>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="sale">Physical Product: </label>
+                      <select class="form-control"  name="flFisico" required ngModel>
+                        <option  [value]="1" >Yes</option>
+                        <option  [value]="0" >No</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="sale">Amount:</label>
+                      <input class="form-control" type="number" name="qtdEstoque" required ngModel>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Submit</button>
+
+                  </form>
+              </div>
+            </div>
+          </div>
+        </div>
+  </div>
+
+
